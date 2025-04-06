@@ -26,7 +26,7 @@ export const availablePlans: Plan[] = [
     name: "Monthly Plan",
     amount: 39.99,
     currency: "USD",
-    interval: "monthly",
+    interval: "month",
     isPopular: true,
     description:
       "Perfect for ongoing, month-to-month meal planning and features.",
@@ -50,3 +50,11 @@ export const availablePlans: Plan[] = [
     ],
   },
 ];
+
+const priceIDMap: Record<string, string> = {
+  week: process.env.STRIPE_PRICE_WEEKLY!,
+  month: process.env.STRIPE_PRICE_MONTHLY!,
+  year: process.env.STRIPE_PRICE_YEARLY!,
+};
+
+export const getPriceIDFromType = (planType: string) => priceIDMap[planType];
