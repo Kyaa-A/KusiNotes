@@ -4,11 +4,20 @@ import { Spinner } from "@/components/spinner";
 import { useUser } from "@clerk/nextjs";
 import { Toaster } from "react-hot-toast";
 import Image from "next/image";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { availablePlans } from "@/lib/plans";
 
 async function fetchSubscriptionStatus() {
   const response = await fetch("/api/profile/subscription-status");
+  return response.json();
+}
+async function updatePlan(newPlan: string) {
+  const response = await fetch("/api/profile/change-plan"
+  {
+    method: "POST",
+    headers: {"Content-Type": "application/json",},
+    body: JSON.stringify({newPlan}),
+  });
   return response.json();
 }
 
@@ -24,6 +33,10 @@ export default function Profile() {
     queryFn: fetchSubscriptionStatus,
     enabled: isLoaded && isSignedIn,
     staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+
+  const {data: updatedPlan, mutate: updatePlanMutation, isPending: isUpdatePlanPending} = useMutation({
+    mutationFn: updatePlan,
   });
 
   const currentPlan = availablePlans.find(
@@ -108,6 +121,25 @@ export default function Profile() {
               </div>
             ) : (
               <p> You are not subscribed to any plan.</p>
+            )}
+          </div>
+          <div>
+            <h3> Change Subscription Plan</h3>
+            {currentPlan && (
+              <>
+                <select defaultValue={currentPlan?.interval} disabled={isUpdatePlanPending}>
+                  <option value="" disabled>
+                    Select New Plan
+                  </option>
+                  {availablePlans.map((plan, key) => (
+                    <option key={key} value={plan.interval}>
+                      {plan.name} - ${plan.amount} / {plan.interval}
+                    </option>
+                  ))}
+                </select>
+                <button> Save Change </button>
+                {isUpdatePlanPending && (<div><Spinner/> <span> Updating Plan...</span></div>)}
+              </>
             )}
           </div>
         </div>
