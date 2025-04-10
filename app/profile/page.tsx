@@ -224,7 +224,9 @@ export default function Profile() {
                     onClick={handleUnsubscribe}
                     disabled={isUnsubscribePending}
                     className={`w-full bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 transition-colors ${
-                      isUnsubscribePending ? "opacity-50 cursor-not-allowed" : ""
+                      isUnsubscribePending
+                        ? "opacity-50 cursor-not-allowed"
+                        : ""
                     }`}
                   >
                     {isUnsubscribePending ? "Unsubscribing..." : "Unsubscribe"}
