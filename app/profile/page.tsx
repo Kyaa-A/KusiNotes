@@ -6,22 +6,23 @@ import { Toaster } from "react-hot-toast";
 import Image from "next/image";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { availablePlans } from "@/lib/plans";
+import { useState } from "react";
 
 async function fetchSubscriptionStatus() {
   const response = await fetch("/api/profile/subscription-status");
   return response.json();
 }
 async function updatePlan(newPlan: string) {
-  const response = await fetch("/api/profile/change-plan"
-  {
+  const response = await fetch("/api/profile/change-plan", {
     method: "POST",
-    headers: {"Content-Type": "application/json",},
-    body: JSON.stringify({newPlan}),
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ newPlan }),
   });
   return response.json();
 }
 
 export default function Profile() {
+  const [selectedPlan, setSelectedPlan] = useState<string>("");
   const { isLoaded, isSignedIn, user } = useUser();
   const {
     data: subscription,
@@ -35,13 +36,24 @@ export default function Profile() {
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
-  const {data: updatedPlan, mutate: updatePlanMutation, isPending: isUpdatePlanPending} = useMutation({
+  const {
+    data: updatedPlan,
+    mutate: updatePlanMutation,
+    isPending: isUpdatePlanPending,
+  } = useMutation({
     mutationFn: updatePlan,
   });
 
   const currentPlan = availablePlans.find(
     (plan) => plan.interval === subscription?.subscription.subscriptionTier
   );
+
+  function handleUpdatePlan() {
+    if (selectedPlan) {
+      updatePlanMutation(selectedPlan);
+    }
+    setSelectedPlan("");
+  }
 
   if (!isLoaded) {
     return (
@@ -123,11 +135,21 @@ export default function Profile() {
               <p> You are not subscribed to any plan.</p>
             )}
           </div>
-          <div>
-            <h3> Change Subscription Plan</h3>
+          <div className="bg-white shadow-md rounded-lg p-4 border border-emerald-200">
+            <h3 className="text-xl font-semibold mb-2 text-emerald-600">
+              {" "}
+              Change Subscription Plan
+            </h3>
             {currentPlan && (
               <>
-                <select defaultValue={currentPlan?.interval} disabled={isUpdatePlanPending}>
+                <select
+                  defaultValue={currentPlan?.interval}
+                  className="w-full px-3 py-2 border border-emerald-300 rounded-md text-black focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                  disabled={isUpdatePlanPending}
+                  onChange={(event: React.ChangeEvent<HTMLSelectElement>) =>
+                    setSelectedPlan(event.target.value)
+                  }
+                >
                   <option value="" disabled>
                     Select New Plan
                   </option>
@@ -137,8 +159,17 @@ export default function Profile() {
                     </option>
                   ))}
                 </select>
-                <button> Save Change </button>
-                {isUpdatePlanPending && (<div><Spinner/> <span> Updating Plan...</span></div>)}
+                <button
+                  onClick={handleUpdatePlan}
+                  className="mt-3 p-2 bg-emerald-500 rounded-lg text-white"
+                >
+                  Save Change
+                </button>
+                {isUpdatePlanPending && (
+                  <div className="flex items-center mt-2">
+                    <Spinner /> <span> Updating Plan...</span>
+                  </div>
+                )}
               </>
             )}
           </div>
