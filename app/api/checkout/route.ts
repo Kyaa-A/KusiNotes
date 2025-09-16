@@ -34,8 +34,8 @@ export async function POST(request: NextRequest) {
       customer_email: email,
       mode: "subscription",
       metadata: { clerkUserId: userId, planType },
-      success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/subscribe`,
+      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/subscribe`,
     });
 
     return NextResponse.json({ url: session.url }, { status: 200 });

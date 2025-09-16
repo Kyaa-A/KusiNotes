@@ -1,10 +1,7 @@
-import OpenAI from "openai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextRequest, NextResponse } from "next/server";
 
-const openAI = new OpenAI({
-  apiKey: process.env.OPEN_ROUTER_API_KEY,
-  baseURL: "https://openrouter.ai/api/v1",
-});
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_AI_API_KEY!);
 
 export async function POST(request: NextRequest) {
   try {
@@ -47,19 +44,10 @@ export async function POST(request: NextRequest) {
       Return just the json with no extra commentaries and no backticks.
     `;
 
-    const response = await openAI.chat.completions.create({
-      model: "meta-llama/llama-3.2-3b-instruct:free", // Ensure this model is accessible and suitable
-      messages: [
-        {
-          role: "user",
-          content: prompt,
-        },
-      ],
-      temperature: 0.7, // Adjust for creativity vs. consistency
-      max_tokens: 1500, // Adjust based on expected response length
-    });
-
-    const aiContent = response.choices[0].message.content.trim();
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const result = await model.generateContent(prompt);
+    const aiResponse = await result.response;
+    const aiContent = aiResponse.text().trim();
 
     let parsedMealPlan: { [day: string]: DailyMealPlan };
     console.log(aiContent);
