@@ -44,7 +44,7 @@ export default function SubscribePage() {
       toast.error("Please sign in to subscribe");
       return;
     }
-    checkoutMutation.mutate({ planType });
+    checkoutMutation.mutate(planType);
   };
 
   return (

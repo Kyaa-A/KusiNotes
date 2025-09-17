@@ -79,7 +79,7 @@ async function handleCheckoutSessionCompleted(
 }
 
 async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
-  const subId = invoice.subscription as string | null;
+  const subId = (invoice as Stripe.Invoice & { subscription?: string }).subscription;
 
   if (!subId) {
     return;
