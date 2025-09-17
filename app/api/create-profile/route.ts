@@ -42,7 +42,7 @@ export async function POST() {
       { message: "Profile created successfully." },
       { status: 201 }
     );
-  } catch (error: any) {
+  } catch {
     return NextResponse.json({ error: "internal error." }, { status: 500 });
   }
 }

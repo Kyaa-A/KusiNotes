@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       subscriptionActive: profile?.subscriptionActive,
     });
-  } catch (error: any) {
+  } catch {
     return NextResponse.json({ error: "Internal Error" }, { status: 500 });
   }
 }

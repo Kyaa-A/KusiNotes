@@ -2,9 +2,8 @@ import { currentUser } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { stripe } from "@/lib/stripe";
-import { getPriceIDFromType } from "@/lib/plans";
 
-export async function POST(request: NextRequest) {
+export async function POST() {
   try {
     const clerkUser = await currentUser();
     if (!clerkUser) {
@@ -42,7 +41,7 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json({ subscription: canceledSubscription });
-  } catch (error: any) {
+  } catch {
     return NextResponse.json({ error: "Internal Error" }, { status: 500 });
   }
 }

@@ -17,8 +17,8 @@ export async function POST(request: NextRequest) {
       signature || "",
       webhookSecret
     );
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 400 });
+  } catch (error: unknown) {
+    return NextResponse.json({ error: error instanceof Error ? error.message : "Invalid signature" }, { status: 400 });
   }
 
   try {
@@ -41,8 +41,8 @@ export async function POST(request: NextRequest) {
       default:
         console.log("Unhandled event type" + event.type);
     }
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 400 });
+  } catch (error: unknown) {
+    return NextResponse.json({ error: error instanceof Error ? error.message : "Invalid signature" }, { status: 400 });
   }
   return NextResponse.json({});
 }
@@ -73,13 +73,13 @@ async function handleCheckoutSessionCompleted(
         subscriptionTier: session.metadata?.planType || null,
       },
     });
-  } catch (error: any) {
-    console.log("Error updating profile: ", error.message);
+  } catch (error: unknown) {
+    console.log("Error updating profile: ", error instanceof Error ? error.message : "Unknown error");
   }
 }
 
 async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
-  const subId = invoice.subscription as string;
+  const subId = invoice.subscription as string | null;
 
   if (!subId) {
     return;
@@ -100,8 +100,8 @@ async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
       return;
     }
     userId = profile.userId;
-  } catch (error: any) {
-    console.log(error.message);
+  } catch (error: unknown) {
+    console.log(error instanceof Error ? error.message : "Unknown error");
     return;
   }
 
@@ -112,8 +112,8 @@ async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
         subscriptionActive: false,
       },
     });
-  } catch (error: any) {
-    console.log(error.message);
+  } catch (error: unknown) {
+    console.log(error instanceof Error ? error.message : "Unknown error");
   }
 }
 async function handleCustomerSubscriptionDeleted(
@@ -136,8 +136,8 @@ async function handleCustomerSubscriptionDeleted(
       return;
     }
     userId = profile.userId;
-  } catch (error: any) {
-    console.log(error.message);
+  } catch (error: unknown) {
+    console.log(error instanceof Error ? error.message : "Unknown error");
     return;
   }
 
@@ -150,7 +150,7 @@ async function handleCustomerSubscriptionDeleted(
         subscriptionTier: null,
       },
     });
-  } catch (error: any) {
-    console.log(error.message);
+  } catch (error: unknown) {
+    console.log(error instanceof Error ? error.message : "Unknown error");
   }
 }

@@ -4,7 +4,7 @@ import { useUser } from "@clerk/nextjs";
 import { useMutation } from "@tanstack/react-query";
 import { Toaster, toast } from "react-hot-toast";
 import { availablePlans } from "@/lib/plans";
-import Spinner from "@/components/spinner";
+import { Spinner } from "@/components/spinner";
 
 export default function SubscribePage() {
   const { user } = useUser();
@@ -34,7 +34,7 @@ export default function SubscribePage() {
     onSuccess: () => {
       toast.success("Redirecting to checkout...");
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast.error(error.message || "Something went wrong");
     },
   });
@@ -61,7 +61,7 @@ export default function SubscribePage() {
         </div>
 
         <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {availablePlans.map((plan, index) => (
+          {availablePlans.map((plan) => (
             <div
               key={plan.interval}
               className={`relative bg-white rounded-2xl shadow-lg border-2 transition-all duration-300 hover:shadow-xl transform hover:scale-105 ${

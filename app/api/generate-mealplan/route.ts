@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({ mealPlan: parsedMealPlan });
-  } catch (error: any) {
+  } catch {
     return NextResponse.json({ error: "Internal Error" }, { status: 500 });
   }
 }

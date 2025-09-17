@@ -52,7 +52,7 @@ export default function MealPlanDashboard() {
     onSuccess: () => {
       toast.success("Meal plan generated successfully!");
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast.error(error.message || "Failed to generate meal plan");
     },
   });
@@ -72,10 +72,10 @@ export default function MealPlanDashboard() {
     }));
   };
 
-  const getMealPlanForDay = (day: string): DailyMealPlan | undefined => {
-    if (!data?.mealPlan) return undefined;
-    return data?.mealPlan[day];
-  };
+  // const getMealPlanForDay = (day: string): DailyMealPlan | undefined => {
+  //   if (!data?.mealPlan) return undefined;
+  //   return data?.mealPlan[day];
+  // };
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-slate-50 via-white to-emerald-50 m-0 p-0">

@@ -22,7 +22,7 @@ async function updatePlan(newPlan: string) {
   return response.json();
 }
 
-async function unsubscribe(newPlan: string) {
+async function unsubscribe() {
   const response = await fetch("/api/profile/unsubscribe", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -49,7 +49,6 @@ export default function Profile() {
   });
 
   const {
-    data: updatedPlan,
     mutate: updatePlanMutation,
     isPending: isUpdatePlanPending,
   } = useMutation({
@@ -59,13 +58,12 @@ export default function Profile() {
       toast.success("Plan updated successfully!");
       refetch();
     },
-    onError: (error) => {
+    onError: () => {
       toast.error("Failed to update plan. Please try again.");
     },
   });
 
   const {
-    data: canceledPlan,
     mutate: unsubscribeMutation,
     isPending: isUnsubscribePending,
   } = useMutation({
@@ -74,7 +72,7 @@ export default function Profile() {
       queryClient.invalidateQueries({ queryKey: ["subscription"] });
       router.push("/subscribe");
     },
-    onError: (error) => {
+    onError: () => {
       toast.error("Error Unsubscribing");
     },
   });
@@ -97,7 +95,7 @@ export default function Profile() {
       )
     ) {
       // i change it
-      unsubscribeMutation(selectedPlan);
+      unsubscribeMutation();
     }
   }
 
